@@ -11,7 +11,7 @@ public class BikeInventory {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-    private Long status;
+    private String status;
     private String location;
 
     @PostPersist
@@ -40,11 +40,11 @@ public class BikeInventory {
     public void setId(Long id) {
         this.id = id;
     }
-    public Long getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(String status) {
         this.status = status;
     }
     public String getLocation() {

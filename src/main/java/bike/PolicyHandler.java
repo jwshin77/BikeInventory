@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PolicyHandler{
+
+    @Autowired
+    BikeInventoryRepository bikeInventoryRepository;
+
     @StreamListener(KafkaProcessor.INPUT)
     public void onStringEventListener(@Payload String eventString){
 
@@ -20,6 +24,14 @@ public class PolicyHandler{
 
         if(bikeReturned.isMe()){
             System.out.println("##### listener UpdateBikeStatus : " + bikeReturned.toJson());
+
+            BikeInventory bikeInventory = bikeInventoryRepository.findByBikeInventoryId(bikeReturned.getBikeInventoryId());
+            bikeInventory.setLocation(bikeReturned.getLocation());
+            bikeInventory.setStatus(bikeReturned.getStatus());
+
+            bikeInventoryRepository.save(bikeInventory);
+
+
         }
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -27,6 +39,13 @@ public class PolicyHandler{
 
         if(bikeRented.isMe()){
             System.out.println("##### listener UpdateBikeStatus : " + bikeRented.toJson());
+
+            BikeInventory bikeInventory = bikeInventoryRepository.findByBikeInventoryId(bikeRented.getBikeInventoryId());
+
+            bikeInventory.setLocation("-");
+            bikeInventory.setStatus(bikeRented.getStatus());
+
+            bikeInventoryRepository.save(bikeInventory);
         }
     }
 
