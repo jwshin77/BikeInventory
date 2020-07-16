@@ -4,5 +4,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface BikeInventoryRepository extends PagingAndSortingRepository<BikeInventory, Long>{
 
-    BikeInventory findByBikeInventoryId(Long id);
+    //BikeInventory findByBikeInventoryId(Long id);
 }

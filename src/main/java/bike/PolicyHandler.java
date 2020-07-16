@@ -8,6 +8,8 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PolicyHandler{
 
@@ -25,13 +27,15 @@ public class PolicyHandler{
         if(bikeReturned.isMe()){
             System.out.println("##### listener UpdateBikeStatus : " + bikeReturned.toJson());
 
-            BikeInventory bikeInventory = bikeInventoryRepository.findByBikeInventoryId(bikeReturned.getBikeInventoryId());
-            bikeInventory.setLocation(bikeReturned.getLocation());
-            bikeInventory.setStatus(bikeReturned.getStatus());
-
-            bikeInventoryRepository.save(bikeInventory);
-
-
+            bikeInventoryRepository.findById(bikeReturned.getBikeInventoryId())
+                    .ifPresent(
+                            bikeInventory ->{
+                                bikeInventory.setLocation(bikeReturned.getLocation());
+                                bikeInventory.setStatus(bikeReturned.getStatus());
+                                bikeInventoryRepository.save(bikeInventory);
+                            }
+                    );
+            //bikeInventoryRepository.findByBikeInventoryId(bikeReturned.getBikeInventoryId());
         }
     }
     @StreamListener(KafkaProcessor.INPUT)
@@ -40,12 +44,16 @@ public class PolicyHandler{
         if(bikeRented.isMe()){
             System.out.println("##### listener UpdateBikeStatus : " + bikeRented.toJson());
 
-            BikeInventory bikeInventory = bikeInventoryRepository.findByBikeInventoryId(bikeRented.getBikeInventoryId());
+            bikeInventoryRepository.findById(bikeRented.getBikeInventoryId())
+                    .ifPresent(
+                            bikeInventory ->{
+                                bikeInventory.setLocation("-");
+                                bikeInventory.setStatus(bikeRented.getStatus());
 
-            bikeInventory.setLocation("-");
-            bikeInventory.setStatus(bikeRented.getStatus());
-
-            bikeInventoryRepository.save(bikeInventory);
+                                bikeInventoryRepository.save(bikeInventory);
+                            }
+                    );
+            //BikeInventory bikeInventory = bikeInventoryRepository.findByBikeInventoryId(bikeRented.getBikeInventoryId());
         }
     }
 
