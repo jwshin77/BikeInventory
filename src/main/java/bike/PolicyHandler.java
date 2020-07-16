@@ -48,7 +48,7 @@ public class PolicyHandler{
                     .ifPresent(
                             bikeInventory ->{
                                 bikeInventory.setLocation("-");
-                                bikeInventory.setStatus("ready");
+                                bikeInventory.setStatus(bikeRented.getStatus());
 
                                 bikeInventoryRepository.save(bikeInventory);
                             }
